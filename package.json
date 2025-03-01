@@ -4,23 +4,28 @@
   "description": "MERN stack",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "cross-env NODE_ENV=production node app.js",
     "server": "nodemon app.js",
     "client": "npm run start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "client:install": "npm install --prefix client",
+    "client:build": "npm run build --prefix client",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm run server\" \"npm run client\""
   },
-  "author": "Sanjar Ospanov <ospanovsanjar1@gmail.com>",
+  "author": "Sanjar Ospanov<ospanovsanjar1@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.10.1"
+    "mongoose": "^8.10.1",
+    "shortid": "^2.2.17"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.2"
   }

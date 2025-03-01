@@ -7,7 +7,7 @@ const router = Router()
 
 // /api/auth/register
 router.post(
-	'/register ',
+	'/register',
 	[
 		check('email', 'Некорректный email').isEmail(),
 		check('password', 'Минимальная длина пароля 6 символов').isLength({
@@ -52,7 +52,7 @@ router.post(
 
 // /api/auth/login
 router.post(
-	'/login ',
+	'/login',
 	[
 		check('email', 'Введите корректный email').normalizeEmail().isEmail(),
 		check('password', 'Введите пароль').exists()
@@ -70,7 +70,7 @@ router.post(
 
 			const { email, password } = req.body
 
-			const user = User.findOne({ email })
+			const user = await User.findOne({ email })
 
 			if (!user) {
 				return res.status(400).json({ message: 'Пользователь не найден...' })
@@ -85,7 +85,7 @@ router.post(
 			}
 
 			const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-				expiresIn: '1h'
+				expiresIn: '1d'
 			})
 
 			res.json({ token, userId: user.id })

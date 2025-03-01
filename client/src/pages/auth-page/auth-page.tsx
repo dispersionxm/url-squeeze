@@ -1,42 +1,65 @@
-import React, { useState } from 'react'
-import { useHttp } from '../../hooks'
+import React, { useState, useEffect, useContext } from 'react'
+import { AuthContext } from '../../context'
+import { useHttp, useMessage } from '../../hooks'
 
 interface IForm {
 	email: string
 	password: string
 }
 
-console.log('import.meta.env.VITE_API_URL', import.meta.env.VITE_API_URL)
-
 export const AuthPage: React.FC = () => {
-	const { loading, request } = useHttp()
+	const auth = useContext(AuthContext)
+	const message = useMessage()
+	const { loading, request, error, clearError } = useHttp()
 	const [form, setForm] = useState<IForm>({
 		email: '',
 		password: ''
 	})
 
-	console.log('form', form)
+	useEffect(() => {
+		message(error)
+		clearError()
+	}, [error, message, clearError])
+
+	useEffect(() => {
+		// @ts-ignore
+		window.M.updateTextFields()
+	}, [])
 
 	const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setForm({ ...form, [event.target.name]: event.target.value })
 	}
 
 	const registerHandler = async () => {
-		console.log('Register')
 		try {
 			const data = await request(
 				`${import.meta.env.VITE_API_URL}/api/auth/register`,
 				'POST',
 				{ ...form }
 			)
-			console.log('Data', data)
+			message(data.message)
+
+			setForm({ email: '', password: '' })
+
+		} catch (e) {}
+	}
+
+	const loginHandler = async () => {
+		try {
+			const data = await request(
+				`${import.meta.env.VITE_API_URL}/api/auth/login`,
+				'POST',
+				{ ...form }
+			)
+			auth.login(data.token, data.userId)
+
 		} catch (e) {}
 	}
 
 	return (
 		<div className="row">
 			<div className="col s6 offset-s3">
-				<h1>Shorten the link</h1>
+				<h1>Сократи ссылку</h1>
 
 				<div className="card blue darken-1">
 					<div className="card-content white-text">
@@ -73,6 +96,7 @@ export const AuthPage: React.FC = () => {
 						<button
 							className="btn yellow darken-4"
 							style={{ marginRight: 10 }}
+							onClick={loginHandler}
 							disabled={loading}
 						>
 							Login
